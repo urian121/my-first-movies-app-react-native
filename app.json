@@ -1,0 +1,44 @@
+{
+  "expo": {
+    "name": "Movies App",
+    "slug": "my-movies-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#fcf9f5",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ea580c"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "splash": {
+        "image": "./assets/splash-icon.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#ea580c"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#ea580c",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "statusBar": {
+        "translucent": true,
+        "backgroundColor": "#00000000"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-splash-screen"
+    ]
+  }
+}
