@@ -1,20 +1,24 @@
 {
   "name": "my-movies-app",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "expo-router/entry",
   "dependencies": {
     "@react-native-masked-view/masked-view": "0.3.2",
     "axios": "^1.18.0",
     "expo": "~56.0.12",
+    "expo-constants": "~56.0.18",
     "expo-linear-gradient": "~56.0.4",
+    "expo-linking": "~56.0.14",
+    "expo-router": "~56.2.11",
     "expo-splash-screen": "~56.0.10",
     "expo-status-bar": "~56.0.4",
     "nativewind": "^4.2.5",
     "react": "19.2.3",
     "react-native": "0.85.3",
+    "react-native-gesture-handler": "~2.31.1",
     "react-native-reanimated": "4.3.1",
     "react-native-safe-area-context": "~5.7.0",
-    "zustand": "^5.0.14"
+    "react-native-screens": "4.25.2"
   },
   "devDependencies": {
     "@types/react": "~19.2.2",

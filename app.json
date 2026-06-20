@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "scheme": "my-movies-app",
     "backgroundColor": "#fcf9f5",
     "splash": {
       "image": "./assets/splash-icon.png",
@@ -27,7 +28,7 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false,
+      "predictiveBackGestureEnabled": true,
       "statusBar": {
         "translucent": true,
         "backgroundColor": "#00000000"
@@ -38,7 +39,8 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-splash-screen"
+      "expo-splash-screen",
+      "expo-router"
     ]
   }
 }

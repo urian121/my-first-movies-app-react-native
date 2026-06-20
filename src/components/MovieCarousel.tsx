@@ -1,11 +1,5 @@
-import { useRef } from "react";
-import {
-  FlatList,
-  Image,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
+import { router } from "expo-router";
+import { Image, Pressable, Text, View } from "react-native";
 import Animated, {
   Extrapolation,
   interpolate,
@@ -14,16 +8,25 @@ import Animated, {
   useSharedValue,
   type SharedValue,
 } from "react-native-reanimated";
+import { moviePath } from "../navigation/routes";
 import { Movie } from "../types/movie";
+
+export interface MovieCarouselSize {
+  width: number;
+  height: number;
+}
+
+export const DEFAULT_CAROUSEL_SIZE: MovieCarouselSize = {
+  width: 100,
+  height: 150,
+};
 
 interface MovieCarouselProps {
   title: string;
   movies: Movie[];
-  onSelectMovie?: (movie: Movie) => void;
+  size?: MovieCarouselSize;
 }
 
-const POSTER_WIDTH = 100;
-const POSTER_HEIGHT = 150;
 const ITEM_SPACING = 12;
 
 interface MovieCarouselItemProps {
@@ -31,7 +34,7 @@ interface MovieCarouselItemProps {
   index: number;
   scrollX: SharedValue<number>;
   itemSize: number;
-  onSelectMovie?: (movie: Movie) => void;
+  size: MovieCarouselSize;
 }
 
 // Renderiza el poster con escala y elevacion segun su posicion en el carrusel.
@@ -40,7 +43,7 @@ function MovieCarouselItem({
   index,
   scrollX,
   itemSize,
-  onSelectMovie,
+  size,
 }: MovieCarouselItemProps) {
   const animatedStyle = useAnimatedStyle(() => {
     const centerOffset = index * itemSize;
@@ -68,16 +71,16 @@ function MovieCarouselItem({
     <Animated.View
       style={[
         {
-          width: POSTER_WIDTH,
+          width: size.width,
           marginRight: ITEM_SPACING,
         },
         animatedStyle,
       ]}
     >
-      <Pressable onPress={() => onSelectMovie?.(movie)}>
+      <Pressable onPress={() => router.push(moviePath(movie.id))}>
         <Image
           source={{ uri: movie.image_url }}
-          style={{ width: POSTER_WIDTH, height: POSTER_HEIGHT }}
+          style={{ width: size.width, height: size.height }}
           className="rounded-xl bg-zinc-200"
           resizeMode="cover"
         />
@@ -86,13 +89,14 @@ function MovieCarouselItem({
   );
 }
 
-const AnimatedFlatList = Animated.createAnimatedComponent(FlatList<Movie>);
-
 // Muestra un carrusel horizontal alineado a la izquierda con mas posters visibles.
-export function MovieCarousel({ title, movies, onSelectMovie }: MovieCarouselProps) {
+export function MovieCarousel({
+  title,
+  movies,
+  size = DEFAULT_CAROUSEL_SIZE,
+}: MovieCarouselProps) {
   const scrollX = useSharedValue(0);
-  const listRef = useRef<FlatList<Movie>>(null);
-  const itemSize = POSTER_WIDTH + ITEM_SPACING;
+  const itemSize = size.width + ITEM_SPACING;
 
   const onScroll = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -104,9 +108,8 @@ export function MovieCarousel({ title, movies, onSelectMovie }: MovieCarouselPro
 
   return (
     <View className="mb-3">
-      <Text className="mb-2 mt-3 px-4 text-lg font-bold text-zinc-900">{title}</Text>
-      <AnimatedFlatList
-        ref={listRef}
+      <Text className="mb-2 mt-3 px-4 text-2xl text-orange-500">{title}</Text>
+      <Animated.FlatList
         data={movies}
         horizontal
         keyExtractor={(item) => `${title}-${item.id}`}
@@ -116,7 +119,7 @@ export function MovieCarousel({ title, movies, onSelectMovie }: MovieCarouselPro
             index={index}
             scrollX={scrollX}
             itemSize={itemSize}
-            onSelectMovie={onSelectMovie}
+            size={size}
           />
         )}
         onScroll={onScroll}

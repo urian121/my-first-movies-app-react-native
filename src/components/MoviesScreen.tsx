@@ -11,9 +11,16 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { fetchMovies } from "../api/movies";
 import { Movie } from "../types/movie";
 import { HeroBanner, getHeroHeight } from "./HeroBanner";
-import { MovieCarousel } from "./MovieCarousel";
-import { MovieDetail } from "./MovieDetail";
+import { DEFAULT_CAROUSEL_SIZE, MovieCarousel } from "./MovieCarousel";
 import { SplashLoading } from "./SplashLoading";
+
+const LARGE_CAROUSEL_SIZE = { width: 140, height: 210 };
+
+const CAROUSELS = [
+  { title: "Populares", key: "popular" as const },
+  { title: "Mejor calificadas", key: "topRated" as const, size: LARGE_CAROUSEL_SIZE },
+  { title: "Accion", key: "action" as const },
+];
 
 // Pantalla principal con hero destacado y carruseles horizontales.
 export function MoviesScreen() {
@@ -24,36 +31,26 @@ export function MoviesScreen() {
 
   const [movies, setMovies] = useState<Movie[]>([]);
   const [featuredMovie, setFeaturedMovie] = useState<Movie | null>(null);
-  const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const moviesWithPoster = useMemo(
     () => movies.filter((movie) => Boolean(movie.image_url)),
     [movies],
   );
 
-  const popularMovies = useMemo(
-    () => [...moviesWithPoster].sort((a, b) => b.stars - a.stars),
-    [moviesWithPoster],
-  );
+  const carouselMovies = useMemo(() => {
+    const byStars = [...moviesWithPoster].sort((a, b) => b.stars - a.stars);
+    const topRated = moviesWithPoster.filter((movie) => movie.stars >= 4);
 
-  const topRatedMovies = useMemo(() => {
-    const rated = [...moviesWithPoster]
-      .filter((movie) => movie.stars >= 4)
-      .sort((a, b) => b.stars - a.stars);
-
-    return rated.length > 0 ? rated : popularMovies;
-  }, [moviesWithPoster, popularMovies]);
-
-  const actionMovies = useMemo(
-    () =>
-      moviesWithPoster.filter(
-        (movie) =>
-          movie.genre.some((genre) => genre.toLowerCase() === "action"),
+    return {
+      popular: byStars,
+      topRated: topRated.length > 0 ? [...topRated].sort((a, b) => b.stars - a.stars) : byStars,
+      action: moviesWithPoster.filter((movie) =>
+        movie.genre.some((genre) => genre.toLowerCase() === "action"),
       ),
-    [moviesWithPoster],
-  );
+    };
+  }, [moviesWithPoster]);
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -61,7 +58,6 @@ export function MoviesScreen() {
     },
   });
 
-  // Aplica parallax suave al hero mientras el usuario hace scroll vertical.
   const heroParallaxStyle = useAnimatedStyle(() => ({
     transform: [
       {
@@ -83,50 +79,28 @@ export function MoviesScreen() {
     ],
   }));
 
-  // Carga peliculas al montar la pantalla.
+  // Carga peliculas y selecciona el hero destacado al montar.
   useEffect(() => {
-    const loadMovies = async () => {
-      try {
-        const response = await fetchMovies();
+    fetchMovies()
+      .then((response) => {
         setMovies(response);
-      } catch {
-        setError("No se pudieron cargar las peliculas.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadMovies();
+        const withPoster = response.filter((movie) => movie.image_url);
+        if (withPoster.length > 0) {
+          setFeaturedMovie(withPoster[Math.floor(Math.random() * withPoster.length)]);
+        }
+      })
+      .catch(() => setError("No se pudieron cargar las peliculas."))
+      .finally(() => setIsLoading(false));
   }, []);
 
-  // Selecciona una pelicula aleatoria una sola vez al cargar el catalogo.
-  useEffect(() => {
-    if (moviesWithPoster.length === 0 || featuredMovie) return;
+  if (isLoading) return <SplashLoading />;
 
-    const randomIndex = Math.floor(Math.random() * moviesWithPoster.length);
-    setFeaturedMovie(moviesWithPoster[randomIndex]);
-  }, [moviesWithPoster, featuredMovie]);
-
-  const handleSelectMovie = (movie: Movie) => {
-    setSelectedMovieId(movie.id);
-  };
-
-  if (isLoading) {
-    return <SplashLoading />;
-  }
-
-  if (error) {
+  if (error || !featuredMovie) {
     return (
       <View className="flex-1 items-center justify-center bg-app-bg">
-        <Text className="text-red-500">{error}</Text>
-      </View>
-    );
-  }
-
-  if (!featuredMovie) {
-    return (
-      <View className="flex-1 items-center justify-center bg-app-bg">
-        <Text className="text-zinc-600">No hay peliculas disponibles.</Text>
+        <Text className={error ? "text-red-500" : "text-zinc-600"}>
+          {error || "No hay peliculas disponibles."}
+        </Text>
       </View>
     );
   }
@@ -142,43 +116,22 @@ export function MoviesScreen() {
       >
         <Animated.View
           style={[
-            {
-              height: heroHeight,
-              marginTop: -insets.top,
-              overflow: "hidden",
-            },
+            { height: heroHeight, marginTop: -insets.top, overflow: "hidden" },
             heroParallaxStyle,
           ]}
         >
-          <HeroBanner
-            movie={featuredMovie}
-            onPress={() => handleSelectMovie(featuredMovie)}
-          />
+          <HeroBanner movie={featuredMovie} height={heroHeight} />
         </Animated.View>
 
-        <MovieCarousel
-          title="Populares"
-          movies={popularMovies}
-          onSelectMovie={handleSelectMovie}
-        />
-        <MovieCarousel
-          title="Mejor calificadas"
-          movies={topRatedMovies}
-          onSelectMovie={handleSelectMovie}
-        />
-        <MovieCarousel
-          title="Accion"
-          movies={actionMovies}
-          onSelectMovie={handleSelectMovie}
-        />
+        {CAROUSELS.map(({ title, key, size = DEFAULT_CAROUSEL_SIZE }) => (
+          <MovieCarousel
+            key={key}
+            title={title}
+            movies={carouselMovies[key]}
+            size={size}
+          />
+        ))}
       </Animated.ScrollView>
-
-      {selectedMovieId !== null && (
-        <MovieDetail
-          movieId={selectedMovieId}
-          onClose={() => setSelectedMovieId(null)}
-        />
-      )}
     </View>
   );
 }
