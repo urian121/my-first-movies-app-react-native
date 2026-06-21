@@ -61,8 +61,8 @@ src/
 ### Instalación
 
 ```bash
-git clone https://github.com/urian121/movies-app-react-native
-cd movies-app-react-native
+git clone https://github.com/urian121/my-first-movies-app-react-native
+cd my-first-movies-app-react-native
 npm install
 ```
 
