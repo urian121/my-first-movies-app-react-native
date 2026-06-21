@@ -8,7 +8,7 @@ Consume la API de [DevsApiHub](https://devsapihub.com/docs/api-movies) y muestra
 <p align="center">
   <img src="./demo/1.png" alt="Movies App" width="30%" />
   <img src="./demo/2.png" alt="Movies App" width="30%" />
-  <img src="./demo/2.png" alt="Movies App" width="30%" />
+  <img src="./demo/3.png" alt="Movies App" width="30%" />
 </p>
 
 ## Características
