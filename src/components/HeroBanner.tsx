@@ -66,10 +66,10 @@ export function HeroBanner({ movie, height }: HeroBannerProps) {
       />
 
       <View className="mb-5" style={styles.content}>
-        <Text className={`text-center font-bold text-orange-500 ${titleSize}`}>
+        <Text className={`text-center font-bold text-black-500 ${titleSize}`}>
           {movie.title}
         </Text>
-        <Text className="text-center text-lg text-orange-500">
+        <Text className="text-center text-lg text-black-500">
           {movie.year} • {movie.genre.join(", ")}
         </Text>
         <Text className="text-center text-2xl text-yellow-300">

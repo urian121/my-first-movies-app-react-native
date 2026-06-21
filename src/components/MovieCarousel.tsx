@@ -108,7 +108,7 @@ export function MovieCarousel({
 
   return (
     <View className="mb-3">
-      <Text className="mb-2 mt-3 px-4 text-2xl text-orange-500">{title}</Text>
+      <Text className="mb-3 mt-6 px-4 text-2xl text-black-500">{title}</Text>
       <Animated.FlatList
         data={movies}
         horizontal

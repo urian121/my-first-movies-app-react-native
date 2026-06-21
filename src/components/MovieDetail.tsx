@@ -16,6 +16,32 @@ import { Movie } from "../types/movie";
 import { renderStars } from "../utils/stars";
 import { MovieCarousel } from "./MovieCarousel";
 
+interface BackButtonProps {
+  onPress: () => void;
+  variant?: "overlay" | "solid";
+}
+
+// Boton de regreso con chevron alineado al texto.
+function BackButton({ onPress, variant = "overlay" }: BackButtonProps) {
+  const insets = useSafeAreaInsets();
+  const isOverlay = variant === "overlay";
+
+  return (
+    <Pressable
+      onPress={onPress}
+      style={isOverlay ? { top: insets.top + 12 } : undefined}
+      className={
+        isOverlay
+          ? "absolute left-4 flex-row items-center rounded-full px-3.5"
+          : "flex-row items-center rounded-full px-5 py-2.5"
+      }
+    >
+      <View style={styles.chevron} />
+      <Text className="text-base font-semibold text-white">Volver</Text>
+    </Pressable>
+  );
+}
+
 // Muestra la ficha completa de una pelicula por ruta /movie/[id].
 export default function MovieDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -72,12 +98,7 @@ export default function MovieDetail() {
         <Text className="mb-4 text-center text-red-500">
           {error || "No se encontro la pelicula."}
         </Text>
-        <Pressable
-          onPress={() => router.back()}
-          className="rounded-full bg-zinc-900 px-5 py-2"
-        >
-          <Text className="font-semibold text-white">Volver</Text>
-        </Pressable>
+        <BackButton onPress={() => router.back()} variant="solid" />
       </View>
     );
   }
@@ -95,19 +116,17 @@ export default function MovieDetail() {
           resizeMode="cover"
         >
           <LinearGradient
-            colors={["rgba(0,0,0,0.45)", "rgba(0,0,0,0)", "rgba(252,249,245,1)"]}
+            colors={[
+              "rgba(0,0,0,0.45)",
+              "rgba(0,0,0,0)",
+              "rgba(252,249,245,1)",
+            ]}
             locations={[0, 0.45, 1]}
             style={StyleSheet.absoluteFill}
           />
         </ImageBackground>
 
-        <Pressable
-          onPress={() => router.back()}
-          style={{ top: insets.top + 12 }}
-          className="absolute left-4 rounded-full bg-black/50 px-4 py-2"
-        >
-          <Text className="font-semibold text-white">← Volver</Text>
-        </Pressable>
+        <BackButton onPress={() => router.back()} />
       </View>
 
       <View className="-mt-6 px-5">
@@ -115,7 +134,9 @@ export default function MovieDetail() {
         <Text className="mt-2 text-lg text-zinc-600">
           {movie.year} • {movie.stars.toFixed(1)} / 5
         </Text>
-        <Text className="mt-2 text-2xl text-yellow-500">{renderStars(movie.stars)}</Text>
+        <Text className="mt-2 text-2xl text-yellow-500">
+          {renderStars(movie.stars)}
+        </Text>
 
         <View className="mt-4 flex-row flex-wrap gap-2">
           {movie.genre.map((genre) => (
@@ -125,7 +146,9 @@ export default function MovieDetail() {
           ))}
         </View>
 
-        <Text className="mt-6 text-base leading-6 text-zinc-700">{movie.description}</Text>
+        <Text className="mt-6 text-base leading-6 text-zinc-700">
+          {movie.description}
+        </Text>
         <MovieCarousel title="Recomendadas" movies={recommendedMovies} />
       </View>
     </ScrollView>
@@ -136,5 +159,14 @@ const styles = StyleSheet.create({
   poster: {
     width: "100%",
     height: "100%",
+  },
+  chevron: {
+    width: 8,
+    height: 8,
+    marginRight: 6,
+    borderColor: "#fff",
+    borderLeftWidth: 2.5,
+    borderBottomWidth: 2.5,
+    transform: [{ rotate: "45deg" }],
   },
 });
