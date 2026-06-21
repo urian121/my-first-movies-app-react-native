@@ -6,9 +6,9 @@ Consume la API de [DevsApiHub](https://devsapihub.com/docs/api-movies) y muestra
 ## Demo
 
 <p align="center">
-  <img src="./demo/1.png" alt="Movies App" width="35%" />
-  <img src="./demo/2.png" alt="Movies App" width="35%" />
-  <img src="./demo/2.png" alt="Movies App" width="35%" />
+  <img src="./demo/1.png" alt="Movies App" width="30%" />
+  <img src="./demo/2.png" alt="Movies App" width="30%" />
+  <img src="./demo/2.png" alt="Movies App" width="30%" />
 </p>
 
 ## Características
