@@ -1,16 +1,54 @@
 # Movies App
 
-Aplicación móvil de películas construida con React Native y Expo.  
-Consume la API de [DevsApiHub](https://devsapihub.com/docs/api-movies) para mostrar un catálogo dinámico con hero destacado, carruseles horizontales y diseño responsivo.  
-La UI está desarrollada con NativeWind (Tailwind CSS) y animaciones con Reanimated.  
-Incluye splash animado, filtros visuales en el hero y secciones como Populares, Mejor calificadas y Acción.
+Aplicación móvil de películas con **React Native**, **Expo** y **Expo Router**.  
+Consume la API de [DevsApiHub](https://devsapihub.com/docs/api-movies) y muestra un catálogo con hero destacado, carruseles horizontales, detalle por película y recomendaciones por género.
 
 ## Demo
 
 <p align="center">
-  <img src="./demo/1.png" alt="Movies App - Hero y carruseles" width="45%" />
-  <img src="./demo/2.png" alt="Movies App - Vista de películas" width="45%" />
+  <img src="./demo/1.png" alt="Movies App" width="35%" />
+  <img src="./demo/2.png" alt="Movies App" width="35%" />
+  <img src="./demo/2.png" alt="Movies App" width="35%" />
 </p>
+
+## Características
+
+- **Home** con hero parallax, película destacada aleatoria y carruseles: Populares, Mejor calificadas y Acción.
+- **Detalle** en `/movie/[id]` con poster, rating, géneros, sinopsis y carrusel de recomendadas.
+- **Navegación** con Expo Router: stack raíz + rutas agrupadas `(tabs)` y `(movies)`.
+- **UI** con [NativeWind](https://www.nativewind.dev/) (Tailwind CSS) y animaciones con [Reanimated](https://docs.swmansion.com/react-native-reanimated/).
+- **Splash** animado al iniciar la app.
+
+## Stack
+
+| Tecnología | Uso |
+|---|---|
+| Expo SDK 56 | Runtime y tooling |
+| Expo Router | Navegación file-based |
+| TypeScript | Tipado estricto |
+| NativeWind 4 | Estilos utility-first |
+| Axios | Cliente HTTP |
+| Reanimated | Parallax, carruseles animados |
+
+## Estructura del proyecto
+
+```
+app/
+├── _layout.tsx              # Stack raíz (tabs + detalle)
+├── (tabs)/
+│   ├── _layout.tsx          # Layout de tabs (tab bar oculta con una sola pantalla)
+│   └── index.tsx            # Home → MoviesScreen
+└── (movies)/
+    ├── _layout.tsx          # Stack del grupo películas
+    └── movie/[id].tsx       # Detalle → MovieDetail
+
+src/
+├── api/movies.ts            # fetchMovies, fetchMovieById, fetchMoviesByGenre, fetchRecommendedMovies
+├── components/              # HeroBanner, MovieCarousel, MoviesScreen, MovieDetail, SplashLoading
+├── navigation/routes.ts     # moviePath(id) → /movie/:id
+├── types/movie.ts           # Movie, MovieApiItem
+└── utils/stars.ts           # renderStars()
+```
 
 ## Cómo correr el proyecto
 
@@ -30,8 +68,6 @@ npm install
 
 ### Variables de entorno
 
-Copia el archivo de ejemplo y configura la URL de la API:
-
 ```bash
 cp .env-example .env
 ```
@@ -45,12 +81,12 @@ EXPO_PUBLIC_MOVIE_URL=https://devsapihub.com/api-movies
 ### Ejecutar
 
 ```bash
-npx expo start
+npx expo start -c
 ```
 
-Luego presiona `a` para Android, `i` para iOS o escanea el QR con Expo Go.
+Luego presiona `a` (Android), `i` (iOS) o escanea el QR con Expo Go.
 
-También puedes usar:
+Scripts disponibles:
 
 ```bash
 npm run android
@@ -60,6 +96,5 @@ npm run web
 
 ## Apoya el proyecto
 
-Si este proyecto te fue útil, apóyanos dejando una estrella en el repositorio.  
-Eso nos ayuda a seguir mejorando la app y publicar más contenido.  
+Si este proyecto te fue útil, deja una estrella en el repositorio.  
 ¡Gracias por tu apoyo!
